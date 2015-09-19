@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+<template id="report_receipt_ext">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <div class="page">
+                <div class="col-xs-12 text-center">
+                    <img src="/pos_receipt_extended/static/src/img/image.png"/><br />
+                </div>
+				<div class="text-center">
+					<span>200 mts este de la Paco
+Escazu, San José, Costa Rica Teléfono Tienda:(506) 2588-1609</span><br/>
+                    <span>Ced Jur: 3-102-600197</span><br />
+                    
+
+                
+				</div>
+                <br/>
+                <table class="col-xs-12" style="margin-top:5px;">
+                    <tr>
+                        <td>
+                        Date: <span t-field="o.date_order" t-field-options='{"format": "d / MM / YYYY"}'/>
+                        </td>
+                        <td class="text-right">
+                        Time: <span t-field="o.date_order" t-field-options='{"format": "h : mm : ss"}'/>
+                        </td>
+                    </tr>
+                </table>
+                <br />
+                <table class="col-xs-12" style="margin-top:10px;">
+                <tr><td><p style=" border-bottom-style: dotted;border-bottom-width: 2px;font-size: 10px;"></p></td></tr>
+                </table>
+                <table class="col-xs-12">
+                    <tr>
+                        <td>Order: </td>
+                        <td class="col-xs-6 text-left"><span t-field="o.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Shop: </td>
+                        <td class="col-xs-6 text-left"><span t-field="o.location_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>User: </td>
+                        <td class="col-xs-6 text-left"><span t-field="o.user_id"/></td>
+                    </tr>
+                </table>
+
+                <table class="col-xs-12" style="margin-top:10px;">
+                <tr><td><p style=" border-bottom-style: dotted;border-bottom-width: 2px;font-size: 10px;"></p></td></tr>
+                </table>
+                <p style="font-size:18px;margin-top:0px !important;margin-bottom:3px !important;"><b>SALE</b></p>
+                <table class="col-xs-12">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-right">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.lines" t-as="line">
+                            <td><span t-field="line.product_id"/></td>
+                            
+                            <td class="text-right">
+                                <t t-if="o.state != 'cancel' and o.statement_ids">
+                                    <span t-esc="formatLang(net(line.id), currency_obj=res_company.currency_id)"/>
+                                </t>
+                                <t t-esc="net_sub(line.id)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="col-xs-12" style="margin-top:10px;">
+                    <tr>
+                        <td><strong>Subtotal: </strong></td>
+                        <td class="text-right">
+                            <strong t-esc="formatLang(sub_total(), currency_obj=res_company.currency_id)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Discount: </strong></td>
+                        <td class="text-right">
+                            <strong t-esc="formatLang(disc(o.id), currency_obj=res_company.currency_id)"/>
+                        </td>
+                    </tr>
+                  <!--  <tr>
+                        <td><strong>Taxes</strong></td>
+                        <td class="text-right">
+                            <strong t-esc="formatLang(o.amount_tax, currency_obj=res_company.currency_id)"/>
+                        </td>
+                    </tr> -->
+                </table>
+                <table class="col-xs-12" style="margin-top:10px;">
+                <tr><td><p style=" border-bottom-style: dotted;border-bottom-width: 2px;font-size: 10px;"></p></td></tr>
+                </table>
+                <table class="col-xs-12" style="margin-bottom:5px;">
+                    <tr>
+                        <td><strong>Total: </strong></td>
+                        <td class="text-right">
+                            <strong t-esc="formatLang(o.amount_total, currency_obj=res_company.currency_id)"/>
+                        </td>
+                    </tr>
+                </table>
+                <table class="col-xs-12" style="margin-bottom:10px;">
+                <tr><td><p style=" border-bottom-style: dotted;border-bottom-width: 2px;font-size: 10px;"></p></td></tr>
+                </table>
+                <br />
+                <table class="col-xs-12">
+                    <tbody>
+                        <tr t-foreach="get_journal_amt(o)" t-as="d">
+                            <td>
+                                <t t-if="d['amt'] &lt; 0">
+                                    <span>Change: </span>
+                                </t>
+                                <t t-if="d['amt'] &gt; 0">
+                                    <span t-esc="get_t(d['type'])"/>
+                                </t>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="formatLang(d['amt'], currency_obj=res_company.currency_id)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><br /><br />
+				<div class="text-center" style="margin-top:10px;">
+					<span>
+                    30 días para cambios con factura original. No se hacen devoluciones de dinero. Cambios deben de ser por producto en inventario. Pedidos especiales y artículos en descuento no se cambian. No se aceptan cambios de artículos usados, lavados o dañados. Muchas gracias por su compra. www.jlangstore.com
+                    </span>
+				</div>
+            </div>
+        </t>
+    </t>
+</template>
+<template id="report_saleorder">
+    <t t-call="report.html_container">
+        <t t-foreach="doc_ids" t-as="doc_id">
+            <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'sale.report_saleorder_document')"/>
+        </t>
+    </t>
+</template>
+</data>
+</openerp>

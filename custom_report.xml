@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<openerp>
+    <data>	
+
+		<report
+            id="point_of_sale.action_report_pos_receipt"
+            string="Receipt ext"
+            model="pos.order"
+            report_type="qweb-pdf"
+            name="pos_receipt_extended.report_receipt_ext"
+            file="pos_receipt_extended.report_receipt_ext"
+        />
+    </data>
+   </openerp>
